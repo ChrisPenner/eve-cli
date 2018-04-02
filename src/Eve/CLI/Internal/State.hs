@@ -1,4 +1,6 @@
-module Eve.CLI.Internal.State where
+module Eve.CLI.Internal.State
+  ( getVty
+  ) where
 
 import Eve
 import Control.Lens

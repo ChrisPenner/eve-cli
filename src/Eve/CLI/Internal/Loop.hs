@@ -1,4 +1,6 @@
-module Eve.CLI.Internal.Loop where
+module Eve.CLI.Internal.Loop
+  ( runCLI
+  ) where
 
 import Eve
 import Eve.CLI.Internal.Events

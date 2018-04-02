@@ -1,4 +1,6 @@
-module Eve.CLI.Internal.Render where
+module Eve.CLI.Internal.Render
+  ( renderImage
+  ) where
 
 import Eve
 import Eve.CLI.Internal.State

@@ -1,4 +1,6 @@
-module Eve.CLI.Internal.Utils where
+module Eve.CLI.Internal.Utils
+  ( getSize
+  ) where
 
 import Eve
 import Eve.CLI.Internal.State
