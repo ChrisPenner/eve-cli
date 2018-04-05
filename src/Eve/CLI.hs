@@ -1,7 +1,7 @@
 module Eve.CLI 
   (
   -- * Events
-  vtyTerminalEvents
+    initCLI
   , onEvent
   , onKeypress
   , onMouseDown
@@ -22,20 +22,13 @@ module Eve.CLI
   , LostFocus(..)
   , GainedFocus(..)
 
-  -- * Loop
-  , initCLI
-
   -- * Rendering
   , renderImage
+  , getSize
 
   , Width
   , Height
-
-  , getSize
   ) where
 
 import Eve.CLI.Internal.Events
-import Eve.CLI.Internal.Loop
 import Eve.CLI.Internal.Render
-import Eve.CLI.Internal.Types
-import Eve.CLI.Internal.Utils

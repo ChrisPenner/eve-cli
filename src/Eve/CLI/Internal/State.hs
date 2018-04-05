@@ -11,7 +11,7 @@ import Control.Monad.Trans
 -- | Store 'V.Vty' state globally
 newtype VTY = VTY V.Vty
 
--- | V.Vty must be initialized inside m.
+-- | V.Vty must be initialized inside IO
 initUi :: (MonadIO m, HasStates s) => AppT s m V.Vty
 initUi = do
   cfg <- liftIO V.standardIOConfig

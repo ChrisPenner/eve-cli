@@ -1,6 +1,6 @@
 {-# language RankNTypes #-}
 module Eve.CLI.Internal.Events
-  ( vtyTerminalEvents
+  ( initCLI
   , onEvent
   , onKeypress
   , onMouseDown
@@ -32,7 +32,24 @@ import Data.Typeable
 
 import qualified Graphics.Vty as V
 
--- | Dispatches terminal events to eve
+-- | Place initCLI first in your eve initialization block. It registers
+-- listeners for terminal events and sets up the renderer
+--
+-- > main :: IO ()
+-- > eve_ $ do
+-- >   initCLI
+-- >   -- add listeners here
+initCLI :: HasEvents s => AppT s IO ()
+initCLI = do
+  vtyTerminalEvents
+  onExit shutdown
+
+-- | Call vty shutdown procedure (if this doesn't happen the terminal ends up in strange states)
+shutdown :: HasEvents s => AppT s IO ()
+shutdown = do
+  v <- getVty
+  liftIO $ V.shutdown v
+
 vtyTerminalEvents :: (Typeable m, Typeable m, MonadIO m, HasEvents s) => AppT s m ()
 vtyTerminalEvents = do
   v <- getVty
@@ -51,31 +68,38 @@ dispatchVtyEvents v dispatch = forever $ do
     V.EvLostFocus ->  dispatch LostFocus
     V.EvGainedFocus ->  dispatch GainedFocus
 
+-- | Type for terminal keypress events
 data Keypress = Keypress V.Key [V.Modifier]
   deriving (Eq, Show)
 
+-- | Type for terminal mouse down events
 data MouseDown = MouseDown Int Int V.Button [V.Modifier]
   deriving (Eq, Show)
 
+-- | Type for terminal mouse up events
 data MouseUp = MouseUp Int Int (Maybe V.Button)
   deriving (Eq, Show)
 
+-- | Type for terminal resize events
 data Resize = Resize Int Int
   deriving (Eq, Show)
 
+-- | Type for terminal paste events
 data Paste = Paste ByteString
   deriving (Eq, Show)
 
+-- | Type for terminal blur events
 data LostFocus = LostFocus
   deriving (Eq, Show)
 
+-- | Type for terminal focus events
 data GainedFocus = GainedFocus
   deriving (Eq, Show)
 
 genericListener :: (Typeable evt, Typeable m, MonadIO m, HasEvents s) => (evt -> AppT s m result) -> AppT s m ListenerId
 genericListener actionF = addListener (void <$> actionF)
 
--- | React to a Event
+-- | React to terminal events Event
 onEvent :: (Typeable m, MonadIO m, HasEvents s) => (V.Event -> AppT s m result) -> AppT s m ListenerId
 onEvent = genericListener
 

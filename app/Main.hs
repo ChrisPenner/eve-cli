@@ -1,10 +1,10 @@
 module Main where
 
-import Eve
-import Eve.CLI
+import Eve (eve_, App, exit)
+import Eve.CLI (initCLI, onKeypress_, renderImage, Keypress(..))
 import qualified Data.Text.Lazy as T
-import Graphics.Vty as V
-import Control.Monad
+import qualified Graphics.Vty as V
+import Control.Monad (void)
 
 main :: IO ()
 main = eve_ $ do
