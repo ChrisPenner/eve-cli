@@ -27,17 +27,18 @@ import Eve.CLI.Internal.State
 import Data.ByteString
 
 import Control.Monad
+import Control.Monad.Trans
 import Data.Typeable
 
 import qualified Graphics.Vty as V
 
 -- | Dispatches terminal events to eve
-vtyTerminalEvents :: App ()
+vtyTerminalEvents :: (Typeable m, Typeable m, MonadIO m, HasEvents s) => AppT s m ()
 vtyTerminalEvents = do
   v <- getVty
   asyncEventProvider $ dispatchVtyEvents v
 
-dispatchVtyEvents :: V.Vty -> EventDispatcher -> IO ()
+dispatchVtyEvents ::  V.Vty -> EventDispatcher -> IO ()
 dispatchVtyEvents v dispatch = forever $ do
   evt <- V.nextEvent v
   dispatch evt
@@ -71,53 +72,53 @@ data LostFocus = LostFocus
 data GainedFocus = GainedFocus
   deriving (Eq, Show)
 
-genericListener :: Typeable evt => (evt -> App result) -> App ListenerId
+genericListener :: (Typeable evt, Typeable m, MonadIO m, HasEvents s) => (evt -> AppT s m result) -> AppT s m ListenerId
 genericListener actionF = addListener (void <$> actionF)
 
 -- | React to a Event
-onEvent :: (V.Event -> App result) -> App ListenerId
+onEvent :: (Typeable m, MonadIO m, HasEvents s) => (V.Event -> AppT s m result) -> AppT s m ListenerId
 onEvent = genericListener
 
 -- | React to a Keypress
-onKeypress :: (Keypress -> App result) -> App ListenerId
+onKeypress :: (Typeable m, MonadIO m, HasEvents s) => (Keypress -> AppT s m result) -> AppT s m ListenerId
 onKeypress = genericListener
 
 -- | React to a Mouse Down
-onMouseDown :: (MouseDown -> App result) -> App ListenerId
+onMouseDown :: (Typeable m, MonadIO m, HasEvents s) => (MouseDown -> AppT s m result) -> AppT s m ListenerId
 onMouseDown = genericListener
 
 -- | React to a Mouse Up
-onMouseUp :: (MouseUp -> App result) -> App ListenerId
+onMouseUp :: (Typeable m, MonadIO m, HasEvents s) => (MouseUp -> AppT s m result) -> AppT s m ListenerId
 onMouseUp = genericListener
 
 -- | React to a Terminal Resize
-onResize :: (Resize -> App result) -> App ListenerId
+onResize :: (Typeable m, MonadIO m, HasEvents s) => (Resize -> AppT s m result) -> AppT s m ListenerId
 onResize = genericListener
 
 -- | React to a Paste
-onPaste :: (Paste -> App result) -> App ListenerId
+onPaste :: (Typeable m, MonadIO m, HasEvents s) => (Paste -> AppT s m result) -> AppT s m ListenerId
 onPaste = genericListener
 
 -- | React to a Event
-onEvent_ :: (V.Event -> App result) -> App ()
+onEvent_ :: (Typeable m, MonadIO m, HasEvents s) => (V.Event -> AppT s m result) -> AppT s m ()
 onEvent_ = void . genericListener
 
 -- | React to a Keypress
-onKeypress_ :: (Keypress -> App result) -> App ()
+onKeypress_ :: (Typeable m, MonadIO m, HasEvents s) => (Keypress -> AppT s m result) -> AppT s m ()
 onKeypress_ = void . genericListener
 
 -- | React to a Mouse Down
-onMouseDown_ :: (MouseDown -> App result) -> App ()
+onMouseDown_ :: (Typeable m, MonadIO m, HasEvents s) => (MouseDown -> AppT s m result) -> AppT s m ()
 onMouseDown_ = void . genericListener
 
 -- | React to a Mouse Up
-onMouseUp_ :: (MouseUp -> App result) -> App ()
+onMouseUp_ :: (Typeable m, MonadIO m, HasEvents s) => (MouseUp -> AppT s m result) -> AppT s m ()
 onMouseUp_ = void . genericListener
 
 -- | React to a Terminal Resize
-onResize_ :: (Resize -> App result) -> App ()
+onResize_ :: (Typeable m, MonadIO m, HasEvents s) => (Resize -> AppT s m result) -> AppT s m ()
 onResize_ = void . genericListener
 
 -- | React to a Paste
-onPaste_ :: (Paste -> App result) -> App ()
+onPaste_ :: (Typeable m, MonadIO m, HasEvents s) => (Paste -> AppT s m result) -> AppT s m ()
 onPaste_ = void . genericListener

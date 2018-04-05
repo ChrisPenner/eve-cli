@@ -23,7 +23,7 @@ module Eve.CLI
   , GainedFocus(..)
 
   -- * Loop
-  , runCLI
+  , initCLI
 
   -- * Rendering
   , renderImage

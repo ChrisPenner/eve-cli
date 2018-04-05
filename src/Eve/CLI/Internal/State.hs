@@ -11,8 +11,8 @@ import Control.Monad.Trans
 -- | Store 'V.Vty' state globally
 newtype VTY = VTY V.Vty
 
--- | V.Vty must be initialized inside IO.
-initUi :: App V.Vty
+-- | V.Vty must be initialized inside m.
+initUi :: (MonadIO m, HasStates s) => AppT s m V.Vty
 initUi = do
   cfg <- liftIO V.standardIOConfig
   v <- liftIO $ V.mkVty cfg
@@ -20,7 +20,7 @@ initUi = do
   return v
 
 -- | Gets vty by checking if it has been initialized yet, if not it runs the initialization.
-getVty :: App V.Vty
+getVty :: (MonadIO m, HasStates s) => AppT s m V.Vty
 getVty = do
   v <- use stateLens
   case v of

@@ -1,5 +1,5 @@
 module Eve.CLI.Internal.Loop
-  ( runCLI
+  ( initCLI
   ) where
 
 import Eve
@@ -8,14 +8,13 @@ import Eve.CLI.Internal.State
 import qualified Graphics.Vty as V
 import Control.Monad.Trans
 
-runCLI :: App () -> IO ()
-runCLI listeners = eve_ $ do
+initCLI :: HasEvents s => AppT s IO ()
+initCLI = do
   vtyTerminalEvents
   onExit shutdown
-  listeners
 
 -- | Call vty shutdown procedure (if this doesn't happen the terminal ends up in strange states)
-shutdown :: App ()
+shutdown :: HasEvents s => AppT s IO ()
 shutdown = do
   v <- getVty
   liftIO $ V.shutdown v

@@ -7,7 +7,8 @@ import Graphics.Vty as V
 import Control.Monad
 
 main :: IO ()
-main = runCLI $ do
+main = eve_ $ do
+  initCLI
   onKeypress_ showKeypress
     where
       showKeypress :: Keypress -> App ()
